@@ -22,7 +22,7 @@ public class ExampleResourceTest extends JerseyTest {
 	
     @Test
     public void testFetchAll() {
-        Response output = target("/hello").request().get();
+        Response output = target("/hello/world").request().get();
         assertEquals("should return status 200", 200, output.getStatus());
         assertNotNull("Should return list", output.getEntity());
     }
