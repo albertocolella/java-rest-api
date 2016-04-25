@@ -12,12 +12,15 @@ import javax.ws.rs.core.Response;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.mapping.Map;
+import org.hibernate.metadata.ClassMetadata;
+import org.hibernate.persister.entity.AbstractEntityPersister;
 
 import com.albertocolella.rest_bootstrap.model.Example;
 import com.albertocolella.rest_bootstrap.util.HibernateUtil;
 
 @Path("/hello")
-public class ExampleResource extends DefaulResource {
+public class ExampleResource extends DefaultResource {
 	
 	private static final long serialVersionUID = 8152538863688455668L;
 
@@ -29,6 +32,9 @@ public class ExampleResource extends DefaulResource {
 		SessionFactory sessionFactory = HibernateUtil.getSessionFactory();  
         Session session = sessionFactory.openSession();
 		session.beginTransaction();
+		ClassMetadata classMetadata = sessionFactory.getClassMetadata(Example.class.getName());
+		AbstractEntityPersister abstractEntityPersister = (AbstractEntityPersister) classMetadata;
+	    String tableName = abstractEntityPersister.getTableName();
         List<Example> examples = session.createQuery("from Example").list();  
         session.getTransaction().commit();
         session.close();

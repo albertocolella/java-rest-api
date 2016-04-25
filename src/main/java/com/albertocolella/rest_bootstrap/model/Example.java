@@ -13,6 +13,15 @@ public class Example {
     private Long id;
 	private String text;
 
+	public Example(){
+		
+	}
+	public Example(Long id, String text) {
+		super();
+		this.id = id;
+		this.text = text;
+	}
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO) 
     // @GeneratedValue(strategy = GenerationType.IDENTITY)

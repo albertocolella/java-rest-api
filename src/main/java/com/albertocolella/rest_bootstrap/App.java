@@ -1,20 +1,28 @@
 package com.albertocolella.rest_bootstrap;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.servlet.ServletContainer;
 
+import com.albertocolella.rest_bootstrap.resources.DefaultResource;
 import com.albertocolella.rest_bootstrap.resources.ExampleResource;
 
 public class App {
 
 	public static void main(String[] args) throws Exception {
 		ResourceConfig resourceConfig = new ResourceConfig();
-		resourceConfig.register(new ExampleResource());
-		 
+		resourceConfig.register(new DefaultResource());
+		resourceConfig.packages("org.glassfish.jersey.examples.jackson");
+		resourceConfig.register(JacksonFeature.class);
+		
 		ServletContextHandler contextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
+		
 		ServletHolder servletHolder = new ServletHolder(new ServletContainer(resourceConfig));
 		contextHandler.addServlet(servletHolder, "/*");
 		 
