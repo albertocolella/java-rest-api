@@ -20,6 +20,9 @@ import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.json.JsonException;
+import javax.json.JsonObject;
+//import org.json.JSONObject;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -29,6 +32,8 @@ import org.hibernate.persister.entity.AbstractEntityPersister;
 
 import com.albertocolella.rest_bootstrap.model.Example;
 import com.albertocolella.rest_bootstrap.util.HibernateUtil;
+
+import net.sf.json.JSONObject;
 
 @Path("/content")
 public class DefaultResource extends HttpServlet {
@@ -103,32 +108,23 @@ public class DefaultResource extends HttpServlet {
 	@POST
 	@Path("/{model}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public <T> Response insert(@PathParam("model") String modelName, T el){		
-/*		SessionFactory sessionFactory = HibernateUtil.getSessionFactory();  
+	public Response insert(@PathParam("model") String modelName, JSONObject el) throws JsonException {
+		SessionFactory sessionFactory = HibernateUtil.getSessionFactory();  
 		Session session = sessionFactory.openSession();
 		String entityName = getClassNameFromParam(modelName);
 		
 		Class<?> c;
 		try {
 			c = Class.forName(entityName);
+			session.beginTransaction();
+			session.save(entityName, JSONObject.toBean(el, c) );
+			session.getTransaction().commit();			
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
+			// TODO
 			e.printStackTrace();
-		}
-	    Constructor<?> ctor = c.getConstructors()[0];
-	    Object object;
-		try {
-			object = ctor.newInstance(el);
-		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	   // c.getDeclaredMethods()[0].invoke(object,Object... MethodArgs);
-		session.beginTransaction();
-		session.save( (Class<entityName>) el );
-		session.getTransaction().commit();
-		session.close();*/
+		} finally {
+			session.close();
+		}		
 		return Response.status(Response.Status.CREATED)
 				.build();
 	}	
