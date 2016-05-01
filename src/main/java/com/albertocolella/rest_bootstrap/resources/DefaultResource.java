@@ -2,6 +2,7 @@ package com.albertocolella.rest_bootstrap.resources;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,9 +38,9 @@ import net.sf.json.JSONObject;
 
 @Path("/content")
 public class DefaultResource extends HttpServlet {
-    
+
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 7213156711136142908L;
 
@@ -47,14 +48,14 @@ public class DefaultResource extends HttpServlet {
 	@Path("/{model}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public <T> Response fetchAll(@PathParam("model") String modelName){
-		SessionFactory sessionFactory = HibernateUtil.getSessionFactory();  
+		SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
         Session session = sessionFactory.openSession();
 		session.beginTransaction();
 		String entityName = getClassNameFromParam(modelName);
 		String tableName= getClassTableName(entityName);
 		try {
-			Class<?> c = Class.forName(entityName);		
-	        List<T> a = session.createQuery("from " + tableName).list();  
+			Class<?> c = Class.forName(entityName);
+	        List<T> a = session.createQuery("from " + tableName).list();
 	        session.getTransaction().commit();
 	        session.close();
 	        if(a!=null && a.size()>0){
@@ -72,12 +73,12 @@ public class DefaultResource extends HttpServlet {
         			.build();
 		}
 	}
-	
+
 	@GET
 	@Path("/{model}/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public <T> Response fetchId(@PathParam("model") String modelName, @PathParam("id") Long id){
-		SessionFactory sessionFactory = HibernateUtil.getSessionFactory();  
+		SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
         Session session = sessionFactory.openSession();
 		session.beginTransaction();
 		String entityName = getClassNameFromParam(modelName);
@@ -104,59 +105,99 @@ public class DefaultResource extends HttpServlet {
         			.build();
 		}
 	}
-	
+
 	@POST
 	@Path("/{model}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response insert(@PathParam("model") String modelName, JSONObject el) throws JsonException {
-		SessionFactory sessionFactory = HibernateUtil.getSessionFactory();  
+		SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 		Session session = sessionFactory.openSession();
 		String entityName = getClassNameFromParam(modelName);
-		
 		Class<?> c;
 		try {
 			c = Class.forName(entityName);
 			session.beginTransaction();
 			session.save(entityName, JSONObject.toBean(el, c) );
-			session.getTransaction().commit();			
+			session.getTransaction().commit();
 		} catch (ClassNotFoundException e) {
 			// TODO
 			e.printStackTrace();
 		} finally {
 			session.close();
-		}		
+		}
 		return Response.status(Response.Status.CREATED)
 				.build();
-	}	
-	
+	}
+
 	@PUT
 	@Path("/{model}/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public <T> Response update(T el){		
-		SessionFactory sessionFactory = HibernateUtil.getSessionFactory();  
+	public <T> Response update(@PathParam("model") String modelName, @PathParam("id") Long id, JSONObject el)
+		throws JsonException {
+		SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 		Session session = sessionFactory.openSession();
-		session.beginTransaction();
-		session.save( el );
-		session.getTransaction().commit();
-		session.close();
+		String entityName = getClassNameFromParam(modelName);
+		Class<?> c;
+		try {
+			c = Class.forName(entityName);
+			session.beginTransaction();
+			Object b = session.get(entityName, id);
+			// TODO check b exists
+			Object j = JSONObject.toBean(el, c);
+			Method method = c.getMethod("setId", Long.class);
+			method.invoke(j, id);			 
+			session.merge(entityName, j );
+			session.getTransaction().commit();
+		} catch (ClassNotFoundException e) {
+			// TODO arg[0] is not a valid class name
+			e.printStackTrace();
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			// TODO method setId not accessible
+			 e.printStackTrace();		
+		} catch (SecurityException e) {
+			// TODO method setId not accessible
+			 e.printStackTrace();	
+		} catch (NoSuchMethodException e) {
+			// TODO method setId does not exist
+			 e.printStackTrace();	
+		} finally {
+			session.close();
+		}
 		return Response.status(Response.Status.OK)
 				.build();
 	}
-	
+
 	@DELETE
 	@Path("/{model}/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public <T> Response delete(T el){
-		SessionFactory sessionFactory = HibernateUtil.getSessionFactory();  
+	public Response delete(@PathParam("model") String modelName, @PathParam("id") Long id){
+		SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 		Session session = sessionFactory.openSession();
 		session.beginTransaction();
-		session.delete( el );
-		session.getTransaction().commit();
-		session.close();
+		String entityName = getClassNameFromParam(modelName);
+		Class<?> c;
+		try {
+			c = Class.forName(entityName);
+			session.beginTransaction();
+			Object b = session.get(entityName, id);		 
+			session.delete(entityName, b );
+			session.getTransaction().commit();
+		} catch (ClassNotFoundException e) {
+			// TODO arg[0] is not a valid class name
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO method setId not accessible
+			 e.printStackTrace();		
+		} catch (SecurityException e) {
+			// TODO method setId not accessible
+			 e.printStackTrace();	
+		} finally {
+			session.close();
+		}
 		return Response.status(Response.Status.OK)
 				.build();
 	}
-	
+
 	protected String getClassTableName(String className){
 		SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 		ClassMetadata classMetadata = sessionFactory.getClassMetadata(className);
@@ -164,7 +205,7 @@ public class DefaultResource extends HttpServlet {
 	    String tableName = abstractEntityPersister.getTableName();
 	    return tableName;
 	}
-	
+
 	protected String getClassNameFromParam(String param){
 		SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 		Map<String,ClassMetadata> classMetadata = sessionFactory.getAllClassMetadata();
