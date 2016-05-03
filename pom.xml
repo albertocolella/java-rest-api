@@ -16,15 +16,12 @@
 		<jersey.version>2.22.2</jersey.version>
 		<hibernate.version>5.1.0.Final</hibernate.version>
 		<junit.version>4.12</junit.version>
+		<json-lib.version>2.4</json-lib.version>
+		<swagger.version>1.5.8</swagger.version>
+		<swagger-ui.version>2.1.4</swagger-ui.version>
 	</properties>
 	
 	<dependencies>
-		<dependency>
-			<groupId>net.sf.json-lib</groupId>
-			<artifactId>json-lib</artifactId>
-			<version>2.4</version>
-	        <classifier>jdk15</classifier>
-	    </dependency>
 
 		<!--Jetty -->
 		<dependency>
@@ -44,11 +41,6 @@
 			<artifactId>jersey-container-servlet-core</artifactId>
 			<version>${jersey.version}</version>
 		</dependency>
-		<!-- <dependency>
-			<groupId>org.glassfish.jersey.containers</groupId>
-			<artifactId>jersey-container-jetty-http</artifactId>
-			<version>${jersey.version}</version>
-		</dependency> -->		
 		<dependency>
             <groupId>org.glassfish.jersey.media</groupId>
             <artifactId>jersey-media-json-processing</artifactId>
@@ -65,6 +57,12 @@
 			<scope>runtime</scope>
 			<version>${jersey.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>net.sf.json-lib</groupId>
+			<artifactId>json-lib</artifactId>
+			<version>${json-lib.version}</version>
+	        <classifier>jdk15</classifier>
+	    </dependency>
 
 		
 
@@ -93,10 +91,22 @@
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
-        	
+        
+        <!-- Documentation -->
+        <dependency>
+		  <groupId>io.swagger</groupId>
+		  <artifactId>swagger-jersey2-jaxrs</artifactId>
+		  <version>${swagger.version}</version>
+		</dependency>
+		<dependency>
+		  <groupId>org.slf4j</groupId>
+		  <artifactId>slf4j-simple</artifactId>
+		  <version>1.7.21</version>
+		</dependency>
 	</dependencies>
 
 	<build>
+	<pluginManagement>
 		<plugins>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -123,5 +133,6 @@
 			    </configuration>
 			</plugin>
 		</plugins>
+		</pluginManagement>
 	</build>
 </project>

@@ -8,16 +8,18 @@ import javax.persistence.Table;
 
 @Entity  
 @Table  
-public class Example extends Content {
+public abstract class Content {
 
-	private String text;
+    private Long id;
 
-	public String getText() {
-		return text;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	public Long getId() {
+		return id;
 	}
 
-	public void setText(String text) {
-		this.text = text;
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 }
