@@ -16,7 +16,7 @@ import org.hibernate.mapping.Map;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.persister.entity.AbstractEntityPersister;
 
-import com.albertocolella.rest_bootstrap.model.Example;
+import com.albertocolella.rest_bootstrap.model.Page;
 import com.albertocolella.rest_bootstrap.util.HibernateUtil;
 
 @Path("/hello")
@@ -32,14 +32,14 @@ public class ExampleResource extends DefaultResource {
 		SessionFactory sessionFactory = HibernateUtil.getSessionFactory();  
         Session session = sessionFactory.openSession();
 		session.beginTransaction();
-		ClassMetadata classMetadata = sessionFactory.getClassMetadata(Example.class.getName());
+		ClassMetadata classMetadata = sessionFactory.getClassMetadata(Page.class.getName());
 		AbstractEntityPersister abstractEntityPersister = (AbstractEntityPersister) classMetadata;
 	    String tableName = abstractEntityPersister.getTableName();
-        List<Example> examples = session.createQuery("from Example").list();  
+        List<Page> examples = session.createQuery("from Example").list();  
         session.getTransaction().commit();
         session.close();
         if(examples!=null && examples.size()>0){
-        	GenericEntity<List<Example>> entities = new GenericEntity<List<Example>>(examples) {};
+        	GenericEntity<List<Page>> entities = new GenericEntity<List<Page>>(examples) {};
 		return Response.status(Response.Status.OK)
 				.entity(entities)
 				.build();
@@ -52,7 +52,7 @@ public class ExampleResource extends DefaultResource {
 	@POST
 	@Path("world")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response insert(Example e) {
+	public Response insert(Page e) {
 		SessionFactory sessionFactory = HibernateUtil.getSessionFactory();  
 		Session session = sessionFactory.openSession();
 		session.beginTransaction();

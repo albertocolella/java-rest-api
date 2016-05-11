@@ -31,7 +31,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.persister.entity.AbstractEntityPersister;
 
-import com.albertocolella.rest_bootstrap.model.Example;
+import com.albertocolella.rest_bootstrap.model.Page;
 import com.albertocolella.rest_bootstrap.util.HibernateUtil;
 
 import net.sf.json.JSONObject;

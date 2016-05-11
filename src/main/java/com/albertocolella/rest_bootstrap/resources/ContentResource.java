@@ -31,7 +31,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.persister.entity.AbstractEntityPersister;
 
-import com.albertocolella.rest_bootstrap.model.Example;
+import com.albertocolella.rest_bootstrap.model.Page;
 import com.albertocolella.rest_bootstrap.util.HibernateUtil;
 
 import net.sf.json.JSONObject;
@@ -44,6 +44,35 @@ public class ContentResource extends HttpServlet {
 	 */
 	private static final long serialVersionUID = 7213156711136142908L;
 
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public <T> Response fetchBaseAll(){
+		SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+        Session session = sessionFactory.openSession();
+		session.beginTransaction();
+		String entityName = getClassNameFromParam("Content");
+		String tableName= getClassTableName(entityName);
+		try {
+			Class<?> c = Class.forName(entityName);
+	        List<T> a = session.createQuery("from " + tableName).list();
+	        session.getTransaction().commit();
+	        session.close();
+	        if(a!=null && a.size()>0){
+	        	GenericEntity<List<T>> entities = new GenericEntity<List<T>>(a) {};
+	        	return Response.status(Response.Status.OK)
+						.entity(entities)
+						.build();
+	        } else {
+	        	return Response.status(Response.Status.NO_CONTENT)
+	        			.build();
+	        }
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+			return Response.status(Response.Status.NOT_FOUND)
+        			.build();
+		}
+	}
+	
 	@GET
 	@Path("/{model}")
 	@Produces(MediaType.APPLICATION_JSON)

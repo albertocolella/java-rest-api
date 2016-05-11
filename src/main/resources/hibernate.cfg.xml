@@ -13,8 +13,8 @@
         <property name="show_sql">true</property>   
         <property name="hibernate.connection.pool_size">1</property>
         <property name="hibernate.hbm2ddl.auto">update</property>
-          
-        <mapping class="com.albertocolella.rest_bootstrap.model.Example"></mapping>  
-  
+        <mapping class="com.albertocolella.rest_bootstrap.model.Content"></mapping>
+        <mapping class="com.albertocolella.rest_bootstrap.model.Page"></mapping>
+        <mapping class="com.albertocolella.rest_bootstrap.model.Article"></mapping>
     </session-factory>  
 </hibernate-configuration>  

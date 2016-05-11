@@ -8,16 +8,6 @@ import javax.persistence.Table;
 
 @Entity  
 @Table  
-public class Example extends Content {
-
-	private String text;
-
-	public String getText() {
-		return text;
-	}
-
-	public void setText(String text) {
-		this.text = text;
-	}
+public class Page extends Content {
 
 }
