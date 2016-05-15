@@ -64,8 +64,8 @@ public class ResourceTest extends JerseyTest {
     private int countPages(){
     	Query query = session.createQuery(
     	        "select count(*) from Page");
-    	int count = (int)query.uniqueResult();
-    	return count;
+    	Long count = (Long)query.uniqueResult();
+    	return count.intValue();
     }
     
     @Test
