@@ -29,6 +29,11 @@
 			<artifactId>jetty-maven-plugin</artifactId>
 			<version>${jetty.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-servlets</artifactId>
+			<version>${jetty.version}</version>
+		</dependency>
 
 		<!-- Jersey -->
 		<dependency>
@@ -63,7 +68,6 @@
 			<version>${json-lib.version}</version>
 	        <classifier>jdk15</classifier>
 	    </dependency>
-
 		
 
 		<!-- Hibernate -->
@@ -76,6 +80,11 @@
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<version>5.1.38</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.hsqldb</groupId>
+		    <artifactId>hsqldb</artifactId>
+		    <version>2.3.3</version>
 		</dependency>
 		
 			
@@ -91,6 +100,12 @@
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>1.9.5</version>
+			<scope>test</scope>
+		</dependency>
         
         <!-- Documentation -->
         <dependency>
@@ -135,4 +150,48 @@
 		</plugins>
 		</pluginManagement>
 	</build>
+	
+	<profiles>
+	<!-- TODO: profile for test running
+	@see https://github.com/Codingpedia/demo-rest-jersey-spring/blob/master/pom.xml#L316 -->
+		<profile>
+	        <id>dev</id>
+	        <activation>
+	            <activeByDefault>true</activeByDefault>
+	        </activation>
+	        <build>
+	            <resources>
+	                <resource>
+	                    <directory>src/main/resources/dev</directory>
+	                </resource>
+	            </resources>
+	            <filters>
+				    <filter>src/main/resources/${build.profile.id}/config.properties</filter>
+				</filters>	            
+	        </build>
+	        <properties>
+	            <build.profile.id>dev</build.profile.id>
+	          <!--   <skip.integration.tests>true</skip.integration.tests>
+            	<skip.unit.tests>true</skip.unit.tests> -->
+	        </properties>
+	    </profile>
+	    <profile>
+	        <id>test</id>
+	        <build>
+	            <resources>
+	                <resource>
+	                    <directory>src/main/resources/test</directory>
+	                </resource>
+	            </resources>
+	            <filters>
+				    <filter>src/main/resources/${build.profile.id}/config.properties</filter>
+				</filters>
+	        </build>
+	       	<properties>
+	            <build.profile.id>test</build.profile.id>
+	          <!--   <skip.integration.tests>true</skip.integration.tests>
+            	<skip.unit.tests>false</skip.unit.tests> -->
+	        </properties>
+	    </profile>
+	</profiles>
 </project>
