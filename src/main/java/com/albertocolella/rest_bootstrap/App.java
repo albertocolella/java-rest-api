@@ -1,10 +1,11 @@
 package com.albertocolella.rest_bootstrap;
 
 /*
- * TODO swagger ui
+ * 
  * TODO authentication, users, roles, permissions
  * TODO logger
  * TODO handle empty resultsets
+ * TODO web.xml conf
  */
 import java.util.EnumSet;
 
@@ -21,12 +22,14 @@ import org.glassfish.jersey.servlet.ServletContainer;
 
 import com.albertocolella.rest_bootstrap.resources.ContentResource;
 
+import io.swagger.jaxrs.config.BeanConfig;
+
 public class App {
 
 	public static void main(String[] args) throws Exception {
 		ResourceConfig resourceConfig = new ResourceConfig();
 		resourceConfig.register(new ContentResource());
-		resourceConfig.packages("org.glassfish.jersey.examples.jackson");
+		//resourceConfig.packages("org.glassfish.jersey.examples.jackson");
 		resourceConfig.register(JacksonFeature.class);
 		resourceConfig.register(io.swagger.jaxrs.listing.ApiListingResource.class);
 		resourceConfig.register(io.swagger.jaxrs.listing.SwaggerSerializers.class);
@@ -42,6 +45,14 @@ public class App {
 		cors.setInitParameter(CrossOriginFilter.ALLOWED_METHODS_PARAM, "GET,POST,HEAD");
 		cors.setInitParameter(CrossOriginFilter.ALLOWED_HEADERS_PARAM, "X-Requested-With,Content-Type,Accept,Origin");
 		
+		BeanConfig beanConfig = new BeanConfig();
+        beanConfig.setVersion("1.0.2");
+        beanConfig.setSchemes(new String[]{"http"});
+        beanConfig.setHost("localhost:7070");
+        beanConfig.setBasePath("/api/v1/docs");
+        beanConfig.setResourcePackage("com.albertocolella.rest_bootstrap.resources");
+        beanConfig.setScan(true);
+        // System.out.println(org.gradle.daemon);
 		Server server = new Server(7070);
 		server.setHandler(contextHandler);
 		server.start();
