@@ -19,6 +19,9 @@ import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.servlet.ServletContainer;
+import java.util.Properties;
+import java.io.InputStream;
+import java.io.FileNotFoundException;
 
 import com.albertocolella.rest_bootstrap.resources.ContentResource;
 
@@ -34,6 +37,17 @@ public class App {
 		resourceConfig.register(io.swagger.jaxrs.listing.ApiListingResource.class);
 		resourceConfig.register(io.swagger.jaxrs.listing.SwaggerSerializers.class);
 
+		Properties prop = new Properties();
+		String propFileName = "config.properties";
+		InputStream inputStream = App.class
+				.getClassLoader()
+				.getResourceAsStream(propFileName);
+		if (inputStream != null) {
+			prop.load(inputStream);
+		} else {
+			throw new FileNotFoundException("property file '" + propFileName + "' not found in the classpath");
+		}
+		
 		ServletContextHandler contextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
 		contextHandler.setContextPath("/api/v1");
 		ServletHolder servletHolder = new ServletHolder(new ServletContainer(resourceConfig));
@@ -48,12 +62,13 @@ public class App {
 		BeanConfig beanConfig = new BeanConfig();
         beanConfig.setVersion("1.0.2");
         beanConfig.setSchemes(new String[]{"http"});
-        beanConfig.setHost("localhost:7070");
+        beanConfig.setHost("localhost:"+prop.getProperty("jetty.port"));
         beanConfig.setBasePath("/api/v1/docs");
         beanConfig.setResourcePackage("com.albertocolella.rest_bootstrap.resources");
         beanConfig.setScan(true);
-        // System.out.println(org.gradle.daemon);
-		Server server = new Server(7070);
+        
+        
+		Server server = new Server(prop.getProperty("jetty.port"));
 		server.setHandler(contextHandler);
 		server.start();
 	}

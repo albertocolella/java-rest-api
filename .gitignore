@@ -49,3 +49,7 @@ target/
 
 # Code Recommenders
 .recommenders/
+
+src/main/resources/*.properties
+src/main/resources/*.xml
+build/
