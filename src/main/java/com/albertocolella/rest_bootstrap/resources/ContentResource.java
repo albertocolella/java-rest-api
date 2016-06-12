@@ -37,7 +37,7 @@ import com.albertocolella.rest_bootstrap.util.HibernateUtil;
 import net.sf.json.JSONObject;
 
 @Path("/content")
-public class ContentResource extends HttpServlet {
+public class ContentResource extends DefaultResource {
 
 	/**
 	 *

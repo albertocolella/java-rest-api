@@ -59,16 +59,21 @@ public class App {
 		cors.setInitParameter(CrossOriginFilter.ALLOWED_METHODS_PARAM, "GET,POST,HEAD");
 		cors.setInitParameter(CrossOriginFilter.ALLOWED_HEADERS_PARAM, "X-Requested-With,Content-Type,Accept,Origin");
 		
+		String version = prop.getProperty("version");
+		String jettyPort = prop.getProperty("jetty.port");
+        String jettyHost = prop.getProperty("jetty.host");
+        
 		BeanConfig beanConfig = new BeanConfig();
-        beanConfig.setVersion("1.0.2");
+        beanConfig.setVersion(version);
         beanConfig.setSchemes(new String[]{"http"});
-        beanConfig.setHost("localhost:"+prop.getProperty("jetty.port"));
+        beanConfig.setHost(jettyHost+":"+prop.getProperty("jetty.port"));
         beanConfig.setBasePath("/api/v1/docs");
         beanConfig.setResourcePackage("com.albertocolella.rest_bootstrap.resources");
         beanConfig.setScan(true);
         
         
-		Server server = new Server(prop.getProperty("jetty.port"));
+        
+		Server server = new Server(Integer.decode(jettyPort));
 		server.setHandler(contextHandler);
 		server.start();
 	}
